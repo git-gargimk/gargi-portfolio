@@ -95,7 +95,7 @@ function Contact() {
 function ProjectDialog({ project, onClose }) {
   const ref = useRef(null);
   useEffect(() => { ref.current.showModal(); }, []);
-  return <dialog ref={ref} className="project-dialog" onCancel={onClose} onClick={event => { if(event.target===event.currentTarget) onClose(); }}><button className="dialog-close" aria-label="Close project details" onClick={onClose}>×</button><ProjectArt kind={project.art} /><div className="dialog-body"><span className="section-kicker">{project.category} · {project.year}</span><h2>{project.title}</h2><p>{project.description} {project.details}</p><div className="project-tags">{project.tags.map(tag=><span key={tag}>{tag}</span>)}</div><LinkedInLink className="text-link">View LinkedIn projects</LinkedInLink></div></dialog>;
+  return <dialog ref={ref} className="project-dialog" aria-label={project.title} onCancel={onClose} onClick={event => { if(event.target===event.currentTarget) onClose(); }}><button className="dialog-close" aria-label="Close project details" onClick={onClose}>×</button><ProjectArt kind={project.art} /><div className="dialog-body"><span className="section-kicker">{project.category} · {project.year}</span><h2>{project.title}</h2><p>{project.description} {project.details}</p><div className="project-tags">{project.tags.map(tag=><span key={tag}>{tag}</span>)}</div><LinkedInLink className="text-link">View LinkedIn projects</LinkedInLink></div></dialog>;
 }
 
 function tabFromHash() { return tabs.find(tab=>tab.toLowerCase()===window.location.hash.slice(1)) || 'About'; }
