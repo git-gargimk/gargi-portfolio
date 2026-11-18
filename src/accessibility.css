@@ -1,0 +1,195 @@
+/* Keyboard access, contrast, reflow, and user preference support. */
+[hidden] {
+  display: none !important;
+}
+
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  padding: 12px 18px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 6px;
+  transform: translateY(-180%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+:where(a, button, [tabindex]):focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 2px #fff;
+}
+
+/* Override the original focus reset on the main landmark. */
+main:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+}
+
+.tab-panel {
+  scroll-margin-top: 16px;
+}
+
+h2.section-kicker {
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+}
+
+.brand,
+.header-social,
+.text-link,
+.footer-link,
+.round-link,
+.filters button {
+  min-height: 44px;
+}
+
+.header-social,
+.round-link {
+  min-width: 44px;
+}
+
+.brand {
+  justify-self: start;
+}
+
+.header-social {
+  justify-content: center;
+}
+
+.text-link,
+.footer-link {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--control-border);
+}
+
+.tabs button {
+  border: 1px solid transparent;
+  border-radius: 0;
+}
+
+.tabs button.active {
+  box-shadow: inset 0 -2px 0 var(--accent);
+  font-weight: 600;
+}
+
+.filters button.selected {
+  font-weight: 600;
+}
+
+.text-link:hover,
+.footer-link:hover {
+  text-decoration-color: currentColor;
+}
+
+.project-title h2,
+.project-title h3 {
+  font-family: var(--serif);
+  font-size: var(--text-card);
+  font-weight: 500;
+  letter-spacing: -.3px;
+  line-height: 1.5;
+}
+
+.project-title,
+.section-heading,
+.filter-bar,
+.hero-copy,
+.project-grid > *,
+.experience-layout > *,
+.credentials-layout > * {
+  min-width: 0;
+}
+
+h1, h2, h3,
+.role-details,
+.contact-note,
+.toolbox {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 580px) {
+  .section-heading {
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .section-heading h2 {
+    max-width: none;
+  }
+
+  .section-heading > .text-link {
+    margin-top: 0;
+    white-space: normal;
+  }
+
+  .closing .button {
+    margin-left: 0;
+    white-space: normal;
+  }
+
+  .closing h2 {
+    flex-basis: calc(100% - 64px);
+  }
+
+  .filters {
+    width: 100%;
+    gap: 6px;
+  }
+
+  .filters button,
+  .filters button.selected {
+    flex: 0 0 auto;
+    padding: 6px 11px;
+  }
+
+  .footer-link {
+    margin-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .tabs button {
+    min-width: 0;
+  }
+}
+
+@media (forced-colors: active) {
+  :where(a, button, [tabindex]):focus-visible,
+  main:focus-visible {
+    outline: 3px solid Highlight;
+    box-shadow: none;
+  }
+
+  .tabs button.active,
+  .filters button.selected {
+    border: 3px solid Highlight;
+    text-decoration: underline;
+  }
+
+  .button {
+    border: 1px solid ButtonText;
+  }
+}

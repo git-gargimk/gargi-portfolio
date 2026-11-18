@@ -1,112 +1,386 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { additionalExperience } from './data/experience';
+import { certifications } from './data/certifications';
+import { profilePhoto } from './data/profile';
+import { drawings } from './data/drawings';
+import { DrawingCarousel } from './DrawingCarousel';
 import './styles.css';
+import './accessibility.css';
 
-const LINKEDIN = 'https://www.linkedin.com/in/gargimrunalkulkarni/';
+const LINKEDIN = 'https://www.linkedin.com/in/gargimk/';
+const GITHUB = 'https://github.com/git-gargimk';
+const INSTAGRAM = 'https://www.instagram.com/chhand.reghancha/';
 const tabs = ['About', 'Experience', 'Projects', 'Contact'];
+const universityProjects = [
+  { id: 'planning', title: 'Planning Poker', category: 'Web development', type: 'Web', year: '2016', description: 'An interactive estimation app for teams, with real-time collaboration.', tags: ['AngularJS', 'Socket.IO', 'Express', 'MongoDB'], art: 'poker', repositoryUrl: 'https://github.com/gargimk/planningpoker' },
+  { id: 'yelp', title: 'Reading between the reviews', category: 'Machine learning', type: 'ML', year: '2016', description: 'Opinion mining on Yelp reviews using support vector machines.', tags: ['Python', 'NLTK', 'scikit-learn', 'Weka'], art: 'sentiment', repositoryUrl: 'https://github.com/gargimk/CPSC531Project' },
+  { id: 'cloud', title: 'From code to cloud', category: 'Cloud computing', type: 'Cloud', year: '2016', description: 'Web application deployment on Amazon EC2.', tags: ['AWS', 'EC2', 'Distributed systems'], art: 'cloud' },
+  { id: 'comments', title: 'A place for conversation', category: 'Web development', type: 'Web', year: '2016', description: 'A React comment app with JSON persistence.', tags: ['React', 'Node.js', 'Express', 'CSS'], art: 'comments', repositoryUrl: 'https://github.com/gargimk/ReactJS/tree/master/CommentApp' },
+  { id: 'houses', title: 'Making sense of house prices', category: 'Machine learning', type: 'ML', year: '2016', description: 'Advanced regression techniques for a Kaggle competition.', tags: ['Regression', 'Data analysis', 'Kaggle'], art: 'houses', repositoryUrl: 'https://github.com/gargimk/Housing-Prices-prediction' },
+  { id: 'prof', title: 'RateThyProf', category: 'Web development', type: 'Web', year: '2016', description: 'A single-page professor and university rating app.', tags: ['AngularJS', 'Hapi.js', 'MongoDB'], art: 'prof', repositoryUrl: 'https://github.com/gargimk/cpsc-473/tree/master/gradProj' },
+];
+const sideProjects = [
+  { id: 'portfolio', title: 'My personal portfolio', category: 'Web development', type: 'Web', year: '2026', description: 'A personal space for my engineering journey, creative interests, and drawings.', tags: ['React', 'JavaScript', 'CSS', 'Vite'], art: 'portfolio' },
+];
 const projects = [
-  { id: 'planning', title: 'Planning Poker', category: 'Web development', type: 'Web', year: '2016', description: 'An interactive estimation app for teams, with real-time collaboration.', tags: ['AngularJS', 'Socket.IO', 'Express', 'MongoDB'], details: 'A curriculum project connecting a web interface with live interactions and a server-backed database.', art: 'poker' },
-  { id: 'yelp', title: 'Reading between the reviews', category: 'Machine learning', type: 'ML', year: '2016', description: 'Opinion mining on Yelp reviews using support vector machines.', tags: ['Python', 'NLTK', 'scikit-learn', 'Weka'], details: 'Classifies review sentiment and compares a Python implementation with Weka.', art: 'sentiment' },
-  { id: 'cloud', title: 'From code to cloud', category: 'Cloud computing', type: 'Cloud', year: '2016', description: 'Web application deployment on Amazon EC2.', tags: ['AWS', 'EC2', 'Distributed systems'], details: 'Exploring cloud infrastructure through instance configuration and application deployment.', art: 'cloud' },
-  { id: 'comments', title: 'A place for conversation', category: 'Web development', type: 'Web', year: '2016', description: 'A React comment app with JSON persistence.', tags: ['React', 'Node.js', 'Express', 'CSS'], details: 'A full stack application that lets users add and persist comments.', art: 'comments' },
-  { id: 'houses', title: 'Making sense of house prices', category: 'Machine learning', type: 'ML', year: '2016', description: 'Advanced regression techniques for a Kaggle competition.', tags: ['Regression', 'Data analysis', 'Kaggle'], details: 'Iterating on predictive analysis for the House Prices competition.', art: 'houses' },
-  { id: 'prof', title: 'RateThyProf', category: 'Web development', type: 'Web', year: '2016', description: 'A single-page professor and university rating app.', tags: ['AngularJS', 'Hapi.js', 'MongoDB'], details: 'Students can create accounts, find professors, and contribute ratings.', art: 'prof' },
+  ...universityProjects.map(project => ({ ...project, group: 'university' })),
+  ...sideProjects.map(project => ({ ...project, group: 'side' })),
 ];
 
 function Arrow({ diagonal = false, ...props }) {
   return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" {...props}><path d={diagonal ? 'M6 18 18 6M6 6h12v12' : 'M4 12h15m-6-6 6 6-6 6'} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 }
 
-function LinkedInLink({ children = 'Let’s connect', className = '' }) {
-  return <a className={className} href={LINKEDIN} target="_blank" rel="noreferrer">{children}<Arrow diagonal /></a>;
+function SectionIcon({ type }) {
+  const shapes = {
+    experience: <><rect x="3" y="7" width="18" height="14" rx="2" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v3h4v-3" /></>,
+    education: <><path d="m2 9 10-5 10 5-10 5L2 9ZM6 11v6c4 3 8 3 12 0v-6M22 9v7" /></>,
+    certifications: <><circle cx="12" cy="8" r="5" /><path d="m8 12-1 9 5-3 5 3-1-9" /></>,
+    projects: <><path d="M3 7V5a2 2 0 0 1 2-2h4l2 3h8a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" /><path d="m10 11-2 3 2 3m4-6 2 3-2 3" /></>,
+    drawing: <><path d="m16 3 5 5-12 12-6 1 1-6L16 3ZM13 6l5 5M4 15l5 5" /></>,
+    contact: <><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z" /><path d="M7 8h10M7 12h6" /></>,
+  };
+  return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{shapes[type]}</svg>;
 }
 
-function HeroArt() {
-  return <div className="hero-art" aria-label="An illustration connecting an interface, code, and ideas" role="img">
-    <div className="art-orbit orbit-one" /><div className="art-orbit orbit-two" />
-    <span className="art-spark spark-one">✳</span><span className="art-spark spark-two">+</span>
-    <div className="art-label label-top"><span className="tiny-dot" /> A little logic. A lot of possibility.</div>
-    <div className="art-window">
-      <div className="window-bar"><div className="window-dots"><i /><i /><i /></div><span>an idea, brought to life</span><span>↗</span></div>
-      <div className="window-content"><div className="art-avatar">g<span>.</span></div><div className="art-line long" /><div className="art-line short" /><div className="art-grid"><div><span /><span /><span /></div><div><span /><span /><span /></div></div><div className="art-button">hello, world <span>↗</span></div></div>
-    </div>
-    <div className="code-note"><div><span className="code-dot" /> behind the interface</div><code><span>const</span> possibility = {'{'}<br />&nbsp; curiosity: <b>true</b>,<br />&nbsp; ideas: <em>'endless'</em><br />{'}'};</code></div>
-    <div className="art-label label-bottom"><span className="brackets">{'{ }'}</span> Thoughtfully built, end to end.</div>
-  </div>;
+function LinkedInLink({ children = 'Let’s connect', className = '', showArrow = true }) {
+  return <a className={className} href={LINKEDIN} target="_blank" rel="noreferrer">{children}{showArrow && <Arrow diagonal />}<span className="sr-only"> (opens in a new tab)</span></a>;
+}
+
+function GitHubIcon() {
+  return <span className="github-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .75a11.25 11.25 0 0 0-3.56 21.92c.56.1.77-.24.77-.54v-2.1c-3.13.68-3.79-1.33-3.79-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.16 1.72 1.16 1 1.72 2.63 1.22 3.27.93.1-.73.39-1.22.71-1.5-2.5-.29-5.13-1.25-5.13-5.56 0-1.23.44-2.23 1.16-3.02-.12-.29-.5-1.43.11-2.98 0 0 .95-.3 3.1 1.15a10.8 10.8 0 0 1 5.64 0c2.15-1.45 3.1-1.15 3.1-1.15.61 1.55.23 2.69.11 2.98.72.79 1.16 1.79 1.16 3.02 0 4.32-2.64 5.27-5.15 5.55.4.35.76 1.03.76 2.08v3.11c0 .3.2.65.78.54A11.25 11.25 0 0 0 12 .75Z" /></svg></span>;
+}
+
+function GitHubLink({ children = 'View GitHub', className = '', showArrow = true }) {
+  return <a className={className} href={GITHUB} target="_blank" rel="noreferrer">{children}{showArrow && <Arrow diagonal />}<span className="sr-only"> (opens in a new tab)</span></a>;
+}
+
+function InstagramIcon() {
+  return <span className="instagram-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" /></svg></span>;
+}
+
+function InstagramLink({ children = 'Instagram', className = '', showArrow = true }) {
+  return <a className={className} href={INSTAGRAM} target="_blank" rel="noreferrer">{children}{showArrow && <Arrow diagonal />}<span className="sr-only"> (opens in a new tab)</span></a>;
 }
 
 function ProjectArt({ kind }) {
+  const project = projects.find(item => item.art === kind);
   return <div className={`project-art ${kind}`} aria-hidden="true">
-    <span className="art-caption">{kind === 'poker' ? 'A SHARED POINT OF VIEW' : kind === 'sentiment' ? 'FINDING THE SIGNAL' : kind === 'cloud' ? 'CONNECTED BY DESIGN' : kind === 'comments' ? 'START A CONVERSATION' : kind === 'houses' ? 'PATTERNS INTO PREDICTIONS' : 'KNOWLEDGE, SHARED'}</span>
-    {kind === 'poker' ? <div className="poker-cards"><span>3<small>✦</small></span><span>5<small>✦</small></span><span>8<small>✦</small></span></div>
-    : kind === 'sentiment' ? <div className="sentiment-art"><div className="review-bubble">“A wonderful experience.”<span>● ● ● ● ●</span></div><div className="signal-line" /><div className="sentiment-result"><span>✳</span> positive <b>↗</b></div></div>
-    : kind === 'cloud' ? <div className="cloud-art"><span className="cloud-symbol">☁</span><div className="cloud-connection" /><div className="server-stack"><i /><i /><i /></div><span className="cloud-node n-one" /><span className="cloud-node n-two" /></div>
-    : kind === 'comments' ? <div className="comment-art"><span>Let’s build something.</span><span>One idea at a time. <b>↵</b></span></div>
-    : kind === 'houses' ? <div className="chart-art">{[30,48,42,65,55,78,92].map((height,i)=><i key={i} style={{height: `${height}%`}} />)}<span>↗</span></div>
-    : <div className="prof-art"><span>R<span>✦</span></span><div>★★★★★</div></div>}
-    <span className="art-index">{kind === 'poker' ? '01' : kind === 'sentiment' ? '02' : kind === 'cloud' ? '03' : kind === 'comments' ? '04' : kind === 'houses' ? '05' : '06'} / EXPLORATIONS</span>
+    <div className="preview-browser">
+      <div className="preview-toolbar"><span className="preview-dots"><i /><i /><i /></span><span>{project.title}</span><span>↗</span></div>
+      <div className="preview-body">
+        <div className="preview-sidebar"><span>{'{ }'}</span><i /><i /><i /><i /></div>
+        <div className="preview-workspace">
+          <span className="preview-eyebrow">{project.category}</span>
+          <strong className="preview-title">{kind === 'poker' ? 'Great teams. Shared estimates.' : kind === 'sentiment' ? 'Every review tells a story.' : kind === 'cloud' ? 'An idea, deployed.' : kind === 'comments' ? 'Start a conversation.' : kind === 'houses' ? 'Find the pattern.' : kind === 'portfolio' ? 'Hi, I’m Gargi.' : 'Share what you know.'}</strong>
+          {kind === 'poker' ? <div className="preview-poker"><div className="preview-task">SPRINT PLANNING <span>Choose your estimate</span></div><div className="preview-estimates">{[1, 2, 3, 5, 8].map(value => <span key={value} className={value === 5 ? 'chosen' : ''}>{value}</span>)}</div><div className="preview-people"><i>A</i><i>M</i><i>J</i><span>Better together.</span></div></div>
+          : kind === 'sentiment' ? <div className="preview-reviews"><div><span>“A wonderful experience.”</span><b>Positive</b></div><div><span>“Could have been better.”</span><b>Negative</b></div><div className="preview-model">Review → SVM classifier → Sentiment</div></div>
+          : kind === 'cloud' ? <div className="preview-cloud"><span>Web application</span><i>↓</i><strong>Amazon EC2</strong><div><i />Application deployed</div></div>
+          : kind === 'comments' ? <div className="preview-comments"><div><b>A</b><p>Every idea starts somewhere.</p></div><div><b>M</b><p>Let’s keep the conversation going.</p></div><span>Write a comment… <i>↵</i></span></div>
+          : kind === 'houses' ? <div className="preview-houses"><div className="preview-chart">{[25, 43, 36, 57, 52, 75, 90].map((height, index) => <i key={index} style={{ height: `${height}%` }} />)}</div><span>Data → Regression → Prediction</span></div>
+          : kind === 'portfolio' ? <div className="preview-portfolio"><span className="preview-monogram">gk</span><p>Engineering meets creativity.</p><div><span>Experience</span><span>Projects</span><span>Outside of work</span></div></div>
+          : <div className="preview-prof"><span className="preview-prof-avatar">R</span><div><strong>A space for student perspectives.</strong><span>★★★★★</span><small>Find. Review. Share.</small></div></div>}
+        </div>
+      </div>
+    </div>
   </div>;
 }
 
-function ProjectCard({ project, onOpen }) {
-  return <button className="project-card" onClick={() => onOpen(project)} aria-label={`Explore ${project.title}`}>
+function ProjectCard({ project, headingLevel = 3 }) {
+  const Heading = `h${headingLevel}`;
+  return <article className={`project-card project-${project.art}`}>
     <ProjectArt kind={project.art} />
-    <div className="project-meta"><span>{project.category}</span><span>{project.year}</span></div>
-    <div className="project-title"><h3>{project.title}</h3><Arrow diagonal /></div>
-    <p>{project.description}</p>
-  </button>;
+    <div className="project-content">
+      <div className="project-meta"><span>{project.category}</span><span>{project.year}</span></div>
+      <div className="project-title"><Heading>{project.title}</Heading></div>
+      <p>{project.description}</p>
+      <ul className="project-stack" aria-label="Project technologies">{project.tags.map(tag => <li key={tag}>{tag}</li>)}</ul>
+      {project.repositoryUrl && <a className="project-open" href={project.repositoryUrl} target="_blank" rel="noopener noreferrer" aria-label={`View project: ${project.title} on GitHub (opens in a new tab)`}><span className="project-action-label">View project <Arrow diagonal /></span></a>}
+    </div>
+  </article>;
 }
 
-function About({ navigate, onOpen }) {
+function About({ navigate }) {
+  const [photoFailed, setPhotoFailed] = useState(false);
+  const summaries = [
+    {
+      title: 'Professional Experience',
+      icon: 'experience',
+      label: 'SOFTWARE & SYSTEMS',
+      description: 'From eCommerce at Accenture to cloud applications at Phyn and enterprise platforms at Microsoft, my work spans frontend development, backend services, cloud infrastructure, and AI-assisted engineering.',
+      detail: 'Microsoft · Phyn · eGumball · Brainsharp · Accenture',
+      action: 'View experience',
+      tab: 'Experience',
+      sectionId: 'professional-experience-heading',
+    },
+    {
+      title: 'Education',
+      icon: 'education',
+      label: 'MY FOUNDATION',
+      description: 'A master’s in Computer Science from California State University, Fullerton, and a bachelor’s in Electronics and Communication from Sinhgad Academy of Engineering, affiliated with Savitribai Phule Pune University.',
+      detail: 'M.S. · 2015–2017 | B.E. · 2008–2012',
+      action: 'View education',
+      tab: 'Experience',
+      sectionId: 'education-heading',
+    },
+    {
+      title: 'Projects',
+      icon: 'projects',
+      label: 'LEARNING THROUGH BUILDING',
+      description: 'University projects and personal experiments exploring real-time collaboration, web applications, machine learning, and cloud deployment. Each project puts an idea into practice across a different part of the stack.',
+      detail: `${projects.length} projects across web development, machine learning, and cloud computing`,
+      action: 'View projects',
+      tab: 'Projects',
+    },
+    {
+      title: 'Certifications',
+      icon: 'certifications',
+      label: 'CONTINUED LEARNING',
+      description: 'Learning across machine learning, React and Redux, and Spring Boot through courses from DeepLearning.AI, Stanford University, and Udemy.',
+      detail: `${certifications.length} certifications and course credentials`,
+      action: 'View certifications',
+      tab: 'Experience',
+      sectionId: 'certifications-heading',
+    },
+  ];
+  const experienceSummaries = summaries.filter(summary => summary.tab === 'Experience');
+  const projectSummary = summaries.find(summary => summary.tab === 'Projects');
   return <>
-    <section className="hero">
-      <div className="hero-copy"><div className="eyebrow"><span className="tiny-dot" /> FULL STACK DEVELOPER</div><h1>Hi, I’m Gargi.<br />Ideas into code.<br /><em>Code into impact.</em></h1><p>From the first interaction to the systems behind it.<br className="desktop-break" /> A full stack perspective on building software.</p><div className="hero-actions"><button className="button primary" onClick={() => navigate('Projects')}>Explore my work <Arrow /></button><LinkedInLink className="text-link" /></div><div className="hero-location"><svg width="15" height="17" viewBox="0 0 20 24" fill="none" aria-hidden="true"><path d="M18 9c0 6-8 13-8 13S2 15 2 9a8 8 0 1 1 16 0Z" stroke="currentColor" strokeWidth="1.4"/><circle cx="10" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.4"/></svg> Greater Seattle Area <span>·</span> Engineering at Microsoft</div></div>
-      <HeroArt />
+    <section className="about-intro" aria-labelledby="about-heading">
+      <figure className="about-profile">
+        <div className="about-portrait">
+          {profilePhoto && !photoFailed ? <img src={profilePhoto} alt="Portrait of Gargi Kulkarni" width="768" height="1024" decoding="async" onError={() => setPhotoFailed(true)} /> : <span className="about-initials" aria-hidden="true">gk</span>}
+        </div>
+        <figcaption><strong>Gargi Kulkarni</strong><span>Greater Seattle Area</span></figcaption>
+        <p className="profile-descriptors">Curious <span aria-hidden="true">|</span> Creative <span aria-hidden="true">|</span> Collaborative</p>
+      </figure>
+      <div className="about-biography">
+        <span className="eyebrow">A LITTLE ABOUT ME</span>
+        <h1 id="about-heading">Hi, I’m Gargi.</h1>
+        <p className="about-role">Software Engineer 2 at Microsoft</p>
+        <p>I’m a software engineer based in the Greater Seattle Area. At Microsoft, I build customer-facing applications and AI-powered engineering tools, with a focus on making complex workflows clearer and easier to use.</p>
+        <p>I hold an M.S. in Computer Science from California State University, Fullerton and a B.E. in Electronics and Communication from Sinhgad Academy of Engineering, affiliated with Savitribai Phule Pune University.</p>
+        <p>I’m curious about how things work and enjoy finding ways to make them clearer. Alongside engineering, drawing and dance give me space for creative expression. This portfolio brings those different parts of my life together.</p>
+      </div>
     </section>
-    <section className="intro-strip"><span className="section-kicker">A LITTLE ABOUT ME</span><p>A developer with a full stack foundation and a growing interest in machine learning. My work connects web experiences, data, and cloud systems.</p><button className="round-link" aria-label="View my experience" onClick={() => navigate('Experience')}><Arrow /></button></section>
-    <section className="selected-section"><div className="section-heading"><div><span className="section-kicker">A FEW THINGS I’VE BUILT</span><h2>From curiosity to creation<span>.</span></h2></div><button className="text-link" onClick={() => navigate('Projects')}>All projects <Arrow /></button></div><div className="project-grid">{projects.slice(0,3).map(project=><ProjectCard key={project.id} project={project} onOpen={onOpen} />)}</div></section>
-    <section className="closing"><span className="asterisk">✳</span><h2>Good things start<br />with a conversation.</h2><LinkedInLink className="button primary" /></section>
+    <div className="about-overview">
+      <section className="about-tab-summary" aria-labelledby="about-experience-heading">
+        <div className="section-heading"><div><span className="section-kicker">MY JOURNEY</span><h2 id="about-experience-heading">Experience</h2></div></div>
+        <div className="about-experience-grid">
+          {experienceSummaries.map(summary => <section className="about-summary" key={summary.title}>
+            <span className="section-kicker">{summary.label}</span>
+            <h3>{summary.title}</h3>
+            <p>{summary.description}</p>
+            <p className="about-summary-detail">{summary.detail}</p>
+            <button className="text-link" onClick={() => navigate(summary.tab, summary.sectionId)}><SectionIcon type={summary.icon} />{summary.action}<Arrow /></button>
+          </section>)}
+        </div>
+      </section>
+      <section className="about-tab-summary" aria-labelledby="about-projects-heading">
+        <div className="section-heading"><div><span className="section-kicker">LEARNING THROUGH BUILDING</span><h2 id="about-projects-heading">Projects</h2></div></div>
+        <div className="about-summary about-project-summary">
+          <p>{projectSummary.description}</p>
+          <p className="about-summary-detail">{projectSummary.detail}</p>
+          <button className="text-link" onClick={() => navigate('Projects')}><SectionIcon type="projects" />View projects<Arrow /></button>
+        </div>
+      </section>
+      <section className="about-tab-summary about-personal-section" aria-labelledby="about-personal-heading">
+        <div className="section-heading"><div><span className="section-kicker">A MORE PERSONAL SIDE</span><h2 id="about-personal-heading">Outside of work</h2></div></div>
+        <div className="about-personal-grid">
+          <div className="about-summary personal-interest">
+            <h3><SectionIcon type="drawing" />Drawing</h3>
+            <p>Drawing is a way for me to explore ideas and express my creative side. From intricate mandalas and floral patterns to pencil sketches of birds and animals, here’s a glimpse into my sketchbook.</p>
+          </div>
+          <DrawingCarousel items={drawings} />
+        </div>
+      </section>
+      <section className="about-tab-summary" aria-labelledby="about-contact-heading">
+        <div className="section-heading"><div><span className="section-kicker">LET’S STAY IN TOUCH</span><h2 id="about-contact-heading">Contact</h2></div></div>
+        <div className="about-summary about-contact-summary">
+          <p>Connect professionally on LinkedIn, explore my code on GitHub, or see my drawings on Instagram.</p>
+          <button className="text-link" onClick={() => navigate('Contact')}>
+            <SectionIcon type="contact" />
+            Get in touch
+            <Arrow />
+          </button>
+        </div>
+      </section>
+    </div>
   </>;
 }
 
 function Experience() {
   return <div className="inner-page"><div className="page-intro"><span className="eyebrow">THE JOURNEY SO FAR</span><h1>Experience that<br /><em>builds perspective.</em></h1><p>Software engineering, continuous learning, and the people along the way.</p></div>
-    <section className="experience-layout"><div><span className="section-kicker">PROFESSIONAL EXPERIENCE</span><article className="timeline-item"><div className="company-mark microsoft"><i /><i /><i /><i /></div><div><span className="subtle-label">SOFTWARE ENGINEERING</span><h2>Microsoft</h2><p>Greater Seattle Area</p><LinkedInLink className="text-link">Experience on LinkedIn</LinkedInLink></div></article>
-    <article className="timeline-item"><div className="company-mark volunteer">↗</div><div><span className="subtle-label">VOLUNTEERING · 2013–2015</span><h2>Accenture CSR</h2><p>Community visits supporting nonprofit organizations.</p></div></article></div>
-    <aside className="education-panel"><span className="section-kicker">EDUCATION</span><span className="education-icon">↗</span><h3>Master’s in<br />Computer Science</h3><p>California State University,<br />Fullerton</p><span className="subtle-label">2015–2017</span><hr /><span className="section-kicker">CONTINUED LEARNING</span><p className="learning-name">Supervised Machine Learning</p><span className="subtle-label">DEEPLEARNING.AI / STANFORD · 2025</span><p className="learning-name">Advanced Learning Algorithms</p><span className="subtle-label">DEEPLEARNING.AI / STANFORD · 2026</span></aside></section>
-    <section className="toolbox"><span className="section-kicker">TECHNOLOGIES ACROSS MY PROJECTS</span><div>{['React', 'JavaScript', 'Node.js', 'Python', 'AngularJS', 'MongoDB', 'AWS', 'scikit-learn'].map(tag=><span key={tag}>{tag}</span>)}</div></section>
+    <div className="experience-layout"><section className="professional-experience" aria-labelledby="professional-experience-heading"><h2 className="experience-section-title" id="professional-experience-heading" tabIndex={-1}>Professional Experience</h2><article className="timeline-item"><div className="role-details"><span className="subtle-label">JAN 2020 – PRESENT</span><h3>Microsoft</h3><p className="role-title">Software Engineer 2</p><p>Greater Seattle Area</p>
+      <ul className="experience-highlights">
+        <li>Designed, developed, and delivered scalable, customer-facing enterprise applications using React, Redux, C#, .NET, Azure, Cosmos DB, Redis, and REST APIs, owning features throughout the software development lifecycle.</li>
+        <li>Modernized legacy frontend experiences using React and optimized API interactions, data retrieval, and caching strategies, achieving an <strong>80% improvement in page-load performance.</strong></li>
+        <li>Led frontend design and implementation of complex enterprise workflows, integrating backend APIs, validation, status tracking, error handling, and self-service capabilities, <strong>eliminating related support requests.</strong></li>
+        <li>Developed security configuration experiences and compliance dashboards, enabling customers to manage security settings, monitor compliance, and identify configuration issues.</li>
+        <li>Built intuitive customer-facing troubleshooting and remediation experiences, <strong>reducing related support tickets by 50%.</strong></li>
+        <li>Developed AI/LLM-powered agents and reusable engineering skills to automate incident investigation, streamline troubleshooting, and <strong>improve engineering productivity by 50%.</strong></li>
+        <li>Used LLM-based development tools, AI agents, and automated code review workflows to improve software development efficiency and engineering processes.</li>
+        <li>Investigated and resolved production incidents, analyzed customer-reported issues, and implemented improvements to application reliability and user experience.</li>
+        <li>Served as a Subject Matter Expert (SME), mentoring engineers, providing technical guidance, collaborating with cross-functional teams, and contributing to architectural discussions, technical planning, and engineering decisions.</li>
+      </ul>
+      </div></article>
+    {additionalExperience.map(role => (
+      <article className="timeline-item" key={role.id} aria-labelledby={`role-${role.id}`}>
+        <div className="role-details">
+          <span className="subtle-label">{role.dates}</span>
+          <h3 id={`role-${role.id}`}>{role.company}</h3>
+          <p className="role-title">{role.title}</p>
+          <p>{role.location}</p>
+          <ul className="experience-highlights">
+            {role.highlights.map(highlight => <li key={highlight}>{highlight}</li>)}
+          </ul>
+        </div>
+      </article>
+    ))}
+    </section>
+    <div className="credentials-layout">
+    <section className="education-panel" aria-labelledby="education-heading">
+      <h2 className="experience-section-title" id="education-heading" tabIndex={-1}>Education</h2>
+      <article className="education-entry">
+        <h3>California State University, Fullerton</h3>
+        <p className="degree-name">Master of Science (M.S.), Computer Science</p>
+        <span className="subtle-label">2015–2017</span>
+        <dl className="education-grades">
+          <div><dt>Grade</dt><dd>A</dd></div>
+        </dl>
+        <span className="subtle-label">ACTIVITIES &amp; SOCIETIES</span>
+        <ul className="education-activities">
+          <li>VIP-Volunteer International Peer at International Programs &amp; Global Engagement</li>
+        </ul>
+      </article>
+      <hr />
+      <article className="education-entry">
+        <h3>Savitribai Phule Pune University</h3>
+        <p className="degree-name">Bachelor of Engineering (B.E.), Electrical, Electronics and Communications Engineering</p>
+        <p>Sinhgad Academy of Engineering, affiliated to Savitribai Phule Pune University</p>
+        <span className="subtle-label">2008–2012</span>
+        <dl className="education-grades">
+          <div><dt>Grade</dt><dd>70%</dd></div>
+        </dl>
+        <span className="subtle-label">ACTIVITIES &amp; SOCIETIES</span>
+        <ul className="education-activities">
+          <li>Member of the Campus Social Responsibility group</li>
+          <li>Member of the college magazine “MOSIAC”</li>
+          <li>Member of the IETE students forum</li>
+        </ul>
+        <p className="education-award"><strong>Student of the Year</strong> · Final year</p>
+      </article>
+    </section>
+    <section className="certifications-section" aria-labelledby="certifications-heading">
+        <h2 className="experience-section-title" id="certifications-heading" tabIndex={-1}>Certifications</h2>
+        {certifications.map(certification => (
+          <article className="certification-entry" key={certification.id}>
+            <h3>{certification.title}</h3>
+            <p>{certification.issuer}</p>
+            <p className="certification-meta">Issued {certification.issued}{certification.expires && ` · Expired ${certification.expires}`}</p>
+            {certification.credentialId && <p className="certification-meta">Credential ID: <span>{certification.credentialId}</span></p>}
+            {certification.credentialUrl && <a className="text-link certification-link" href={certification.credentialUrl} target="_blank" rel="noreferrer">View credential<span className="sr-only"> for {certification.title} (opens in a new tab)</span><Arrow diagonal /></a>}
+          </article>
+        ))}
+    </section>
+    </div>
+    </div>
+    <section className="toolbox"><h2 className="section-kicker">TECHNOLOGIES &amp; TOOLS</h2><div>{['React', 'Redux', 'JavaScript', 'C#', '.NET', 'ASP.NET MVC', 'SQL Server', 'Azure', 'Cosmos DB', 'Redis', 'REST APIs', 'AI / LLM agents', 'Node.js', 'Python', 'AngularJS', 'MongoDB', 'AWS', 'AWS Lambda', 'SAP Hybris Commerce', 'Java', 'Spring', 'WCF', 'ExtJS', 'JUnit', 'Mockito', 'Jenkins', 'scikit-learn'].map(tag=><span key={tag}>{tag}</span>)}</div></section>
   </div>;
 }
 
-function Projects({ onOpen }) {
+function Projects() {
   const [filter, setFilter] = useState('All');
   const filtered = projects.filter(project => filter === 'All' || project.type === filter);
-  return <div className="inner-page"><div className="page-intro"><span className="eyebrow">IDEAS, EXPLORED</span><h1>A collection of<br /><em>learning by building.</em></h1><p>Selected academic projects across web development, machine learning, and the cloud.</p></div><div className="filter-bar"><div className="filters" aria-label="Filter projects">{['All', 'Web', 'ML', 'Cloud'].map(option=><button key={option} className={filter===option?'selected':''} aria-pressed={filter===option} onClick={()=>setFilter(option)}>{option === 'All' ? 'All projects' : option === 'ML' ? 'Machine learning' : option === 'Web' ? 'Web development' : 'Cloud'}</button>)}</div><span className="project-count" aria-live="polite">{String(filtered.length).padStart(2, '0')} projects</span></div><div className="project-grid projects-full">{filtered.map(project=><ProjectCard key={project.id} project={project} onOpen={onOpen}/>)}</div></div>;
+  const groups = [
+    { id: 'side', title: 'Curiosity to Code', label: 'PERSONAL PROJECTS', description: 'Personal projects and experiments that bring together my technical interests and creative side.' },
+    { id: 'university', title: 'Classroom to Code', label: 'UNIVERSITY PROJECTS', description: 'Coursework and academic explorations in web development, machine learning, and cloud computing.' },
+  ];
+  return <div className="inner-page">
+    <div className="page-intro"><span className="eyebrow">IDEAS, EXPLORED</span><h1>A collection of<br /><em>learning by building.</em></h1><p>From university foundations to personal experiments, a collection of things I’ve learned by making.</p></div>
+    <div className="filter-bar">
+      <div className="filters" role="group" aria-label="Filter projects">{['All', 'Web', 'ML', 'Cloud'].map(option => <button key={option} className={filter === option ? 'selected' : ''} aria-pressed={filter === option} aria-controls="project-results" onClick={() => setFilter(option)}>{option === 'All' ? 'All projects' : option === 'ML' ? 'Machine learning' : option === 'Web' ? 'Web development' : 'Cloud'}</button>)}</div>
+      <span className="project-count" role="status" aria-atomic="true">{filtered.length} {filtered.length === 1 ? 'project' : 'projects'}</span>
+    </div>
+    <div id="project-results" className="project-groups">
+      {groups.map(group => {
+        const entries = filtered.filter(project => project.group === group.id);
+        return <section className="project-group" key={group.id} aria-labelledby={`${group.id}-projects-heading`}>
+          <div className="section-heading"><div><span className="section-kicker">{group.label}</span><h2 id={`${group.id}-projects-heading`}>{group.title}</h2><p className="project-group-description">{group.description}</p></div></div>
+          {entries.length ? <div className="project-grid projects-full">{entries.map(project => <ProjectCard key={project.id} project={project} />)}</div> : <p className="project-group-empty">No projects in this section match the selected filter.</p>}
+        </section>;
+      })}
+    </div>
+  </div>;
 }
 
 function Contact() {
-  const [copied, setCopied] = useState(false);
-  async function copyProfile() {
-    try { await navigator.clipboard.writeText(LINKEDIN); setCopied(true); } catch { setCopied(false); }
-  }
-  return <div className="inner-page contact-page"><span className="contact-star" aria-hidden="true">✳</span><span className="eyebrow">LET’S MAKE A CONNECTION</span><h1>A conversation today.<br /><em>A possibility tomorrow.</em></h1><p>Have an idea, an opportunity, or a shared interest in technology?<br />Find me on LinkedIn and let’s start there.</p><LinkedInLink className="button primary">Say hello on LinkedIn</LinkedInLink><div className="contact-profile"><span className="linkedin-icon">in</span><div><span>Gargi Kulkarni</span><small>linkedin.com/in/gargimrunalkulkarni</small></div><button className="copy-button" onClick={copyProfile} aria-label="Copy LinkedIn profile URL">{copied ? 'Copied ✓' : 'Copy link'}</button></div><span className="copy-status" role="status">{copied ? 'Profile link copied to clipboard.' : ''}</span><div className="contact-note"><span className="tiny-dot" /> BASED IN THE GREATER SEATTLE AREA</div></div>;
-}
-
-function ProjectDialog({ project, onClose }) {
-  const ref = useRef(null);
-  useEffect(() => { ref.current.showModal(); }, []);
-  return <dialog ref={ref} className="project-dialog" aria-label={project.title} onCancel={onClose} onClick={event => { if(event.target===event.currentTarget) onClose(); }}><button className="dialog-close" aria-label="Close project details" onClick={onClose}>×</button><ProjectArt kind={project.art} /><div className="dialog-body"><span className="section-kicker">{project.category} · {project.year}</span><h2>{project.title}</h2><p>{project.description} {project.details}</p><div className="project-tags">{project.tags.map(tag=><span key={tag}>{tag}</span>)}</div><LinkedInLink className="text-link">View LinkedIn projects</LinkedInLink></div></dialog>;
+  return <div className="inner-page contact-page">
+    <span className="eyebrow">LET’S MAKE A CONNECTION</span>
+    <h1>A conversation today.<br /><em>A possibility tomorrow.</em></h1>
+    <p>Have an idea, an opportunity, or a shared interest in technology?<br />Connect, explore my code, or say hello.</p>
+    <div className="contact-actions">
+      <LinkedInLink className="button contact-social-link" showArrow={false}>
+        <span className="contact-platform-icon"><span className="linkedin-icon" aria-hidden="true">in</span></span>
+        <span className="contact-link-copy"><strong>Connect on LinkedIn</strong><small>linkedin.com/in/gargimk</small></span>
+      </LinkedInLink>
+      <GitHubLink className="button contact-social-link" showArrow={false}>
+        <span className="contact-platform-icon"><GitHubIcon /></span>
+        <span className="contact-link-copy"><strong>View code on GitHub</strong><small>github.com/git-gargimk</small></span>
+      </GitHubLink>
+      <InstagramLink className="button contact-social-link" showArrow={false}>
+        <span className="contact-platform-icon"><InstagramIcon /></span>
+        <span className="contact-link-copy"><strong>Find me on Instagram</strong><small>instagram.com/chhand.reghancha</small></span>
+      </InstagramLink>
+    </div>
+    <div className="contact-note"><span className="tiny-dot" aria-hidden="true" /> BASED IN THE GREATER SEATTLE AREA</div>
+  </div>;
 }
 
 function tabFromHash() { return tabs.find(tab=>tab.toLowerCase()===window.location.hash.slice(1)) || 'About'; }
 
-function App() {
+export function App() {
   const [activeTab, setActiveTab] = useState(tabFromHash);
-  const [openProject, setOpenProject] = useState(null);
   const tabRefs = useRef([]);
-  useEffect(() => { const sync = () => setActiveTab(tabFromHash()); window.addEventListener('hashchange',sync); return ()=>window.removeEventListener('hashchange',sync); }, []);
-  useEffect(() => { document.title = `${activeTab} — Gargi Kulkarni`; }, [activeTab]);
-  function navigate(tab) { setActiveTab(tab); window.location.hash = tab.toLowerCase(); window.scrollTo({top: 0, behavior: 'instant'}); }
+  const panelRefs = useRef({});
+  const mainRef = useRef(null);
+  const focusPanel = useRef(false);
+  const focusSection = useRef(null);
+  useEffect(() => {
+    const sync = () => {
+      focusPanel.current = true;
+      focusSection.current = window.history.state?.sectionId || null;
+      setActiveTab(tabFromHash());
+    };
+    window.addEventListener('hashchange', sync);
+    return () => window.removeEventListener('hashchange', sync);
+  }, []);
+  useEffect(() => {
+    document.title = `${activeTab} — Gargi Kulkarni`;
+    if (focusPanel.current) {
+      const section = focusSection.current && document.getElementById(focusSection.current);
+      const target = section || panelRefs.current[activeTab];
+      target?.focus({ preventScroll: true });
+      if (section) section.scrollIntoView?.({ block: 'start', behavior: 'instant' });
+      focusPanel.current = false;
+      focusSection.current = null;
+    }
+  }, [activeTab]);
+  function navigate(tab, { moveFocus = false, sectionId = null } = {}) {
+    focusPanel.current = moveFocus;
+    focusSection.current = sectionId;
+    if (window.location.hash !== `#${tab.toLowerCase()}`) window.history.pushState({ sectionId }, '', `#${tab.toLowerCase()}`);
+    if (activeTab === tab && moveFocus) {
+      const section = sectionId && document.getElementById(sectionId);
+      (section || panelRefs.current[tab])?.focus({ preventScroll: true });
+      if (section) section.scrollIntoView?.({ block: 'start', behavior: 'instant' });
+      focusPanel.current = false;
+      focusSection.current = null;
+    }
+    setActiveTab(tab);
+    if (!sectionId || activeTab !== tab) window.scrollTo({ top: 0, behavior: 'instant' });
+  }
   function handleTabKey(event, index) {
     let next;
     if (event.key==='ArrowRight') next=(index+1)%tabs.length;
@@ -115,13 +389,19 @@ function App() {
     if (event.key==='End') next=tabs.length-1;
     if (next!==undefined) {event.preventDefault();navigate(tabs[next]);tabRefs.current[next].focus();}
   }
-  return <div className="site-shell"><header className="site-header"><a className="brand" href="#about" aria-label="Gargi Kulkarni home" onClick={()=>navigate('About')}><span className="brand-mark">g<span>.</span></span><span>Gargi Kulkarni<span className="brand-description">A PERSONAL PORTFOLIO</span></span></a><nav className="tabs" role="tablist" aria-label="Portfolio sections">{tabs.map((tab,index)=><button key={tab} ref={el=>tabRefs.current[index]=el} role="tab" id={`tab-${tab.toLowerCase()}`} aria-controls={`panel-${tab.toLowerCase()}`} aria-selected={tab===activeTab} tabIndex={tab===activeTab?0:-1} className={tab===activeTab?'active':''} onClick={()=>navigate(tab)} onKeyDown={event=>handleTabKey(event,index)}>{tab}<span className="tab-dot" /></button>)}</nav><LinkedInLink className="header-social"><span className="linkedin-icon">in</span><span className="sr-only">LinkedIn profile</span></LinkedInLink></header>
-    <main id={`panel-${activeTab.toLowerCase()}`} role="tabpanel" aria-labelledby={`tab-${activeTab.toLowerCase()}`} tabIndex={0} key={activeTab}>
-      {activeTab==='About' ? <About navigate={navigate} onOpen={setOpenProject}/> : activeTab==='Experience' ? <Experience/> : activeTab==='Projects' ? <Projects onOpen={setOpenProject}/> : <Contact/>}
+  return <div className="site-shell">
+    <a className="skip-link" href="#main-content" onClick={event => { event.preventDefault(); mainRef.current?.focus(); }}>Skip to main content</a>
+    <header className="site-header"><a className="brand" href="#about" aria-label="Gargi Kulkarni home" onClick={event => { event.preventDefault(); navigate('About', { moveFocus: true }); }}><span className="brand-mark" aria-hidden="true">gk</span><span>Gargi Kulkarni</span></a><div className="tabs" role="tablist" aria-label="Portfolio sections">{tabs.map((tab,index)=><button key={tab} ref={el=>tabRefs.current[index]=el} role="tab" id={`tab-${tab.toLowerCase()}`} aria-controls={`panel-${tab.toLowerCase()}`} aria-selected={tab===activeTab} tabIndex={tab===activeTab?0:-1} className={tab===activeTab?'active':''} onClick={()=>navigate(tab)} onKeyDown={event=>handleTabKey(event,index)}>{tab}</button>)}</div><nav className="header-socials" aria-label="Social profiles"><LinkedInLink className="header-social"><span className="linkedin-icon" aria-hidden="true">in</span><span className="sr-only">LinkedIn profile</span></LinkedInLink><GitHubLink className="header-social"><GitHubIcon /><span className="sr-only">GitHub profile</span></GitHubLink><InstagramLink className="header-social" showArrow={false}><InstagramIcon /><span className="sr-only">Instagram profile</span></InstagramLink></nav></header>
+    <main id="main-content" ref={mainRef} tabIndex={-1}>
+      {tabs.map(tab => (
+        <section key={tab} id={`panel-${tab.toLowerCase()}`} className="tab-panel" ref={element => panelRefs.current[tab] = element} role="tabpanel" aria-labelledby={`tab-${tab.toLowerCase()}`} tabIndex={0} hidden={activeTab !== tab}>
+          {activeTab === tab && (tab === 'About' ? <About navigate={(destination, sectionId) => navigate(destination, { moveFocus: true, sectionId })}/> : tab === 'Experience' ? <Experience/> : tab === 'Projects' ? <Projects/> : <Contact/>)}
+        </section>
+      ))}
     </main>
-    <footer className="site-footer"><span>© {new Date().getFullYear()} Gargi Kulkarni</span><span className="footer-note">A little curiosity goes a long way.</span><LinkedInLink className="footer-link">Find me on LinkedIn</LinkedInLink></footer>
-    {openProject && <ProjectDialog project={openProject} onClose={()=>setOpenProject(null)}/>}
+    <footer className="site-footer"><span>© {new Date().getFullYear()} Gargi Kulkarni</span><span className="footer-note">A little curiosity goes a long way.</span><div className="footer-socials"><LinkedInLink className="footer-link" showArrow={false}>LinkedIn</LinkedInLink><GitHubLink className="footer-link" showArrow={false}>GitHub</GitHubLink><InstagramLink className="footer-link" showArrow={false} /></div></footer>
   </div>;
 }
 
-createRoot(document.getElementById('root')).render(<App />);
+const root = document.getElementById('root');
+if (root) createRoot(root).render(<App />);
