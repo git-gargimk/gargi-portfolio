@@ -30,6 +30,8 @@ Content is based on the LinkedIn profile at https://www.linkedin.com/in/gargimk/
 
 Projects are grouped into **Curiosity to Code** (personal and side projects, starting with this portfolio), followed by **Classroom to Code** (six university projects). Both sections remain expanded and share the technology filters. Their project data and section descriptions are in `src/main.jsx`.
 
+University projects use compact topic graphics and a responsive card grid: three columns on desktop, two on tablets, and one on mobile. The graphics represent each project's subject rather than an application interface.
+
 Five projects link directly to verified repositories or project folders under `github.com/gargimk`. The EC2 deployment and current React portfolio have no project link until their repository URLs are supplied. Add a `repositoryUrl` to their project data when available. Project links open in a new tab; project modals have been removed.
 
 ## Accessibility checks

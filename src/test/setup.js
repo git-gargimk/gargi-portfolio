@@ -6,4 +6,5 @@ Object.defineProperty(window, 'scrollTo', { value: vi.fn(), writable: true });
 afterEach(() => {
   cleanup();
   window.history.replaceState(null, '', '/');
+  window.scrollY = 0;
 });

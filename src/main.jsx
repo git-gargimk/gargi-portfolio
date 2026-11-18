@@ -15,10 +15,10 @@ const tabs = ['About', 'Experience', 'Projects', 'Contact'];
 const universityProjects = [
   { id: 'planning', title: 'Planning Poker', category: 'Web development', type: 'Web', year: '2016', description: 'An interactive estimation app for teams, with real-time collaboration.', tags: ['AngularJS', 'Socket.IO', 'Express', 'MongoDB'], art: 'poker', repositoryUrl: 'https://github.com/gargimk/planningpoker' },
   { id: 'yelp', title: 'Reading between the reviews', category: 'Machine learning', type: 'ML', year: '2016', description: 'Opinion mining on Yelp reviews using support vector machines.', tags: ['Python', 'NLTK', 'scikit-learn', 'Weka'], art: 'sentiment', repositoryUrl: 'https://github.com/gargimk/CPSC531Project' },
-  { id: 'cloud', title: 'From code to cloud', category: 'Cloud computing', type: 'Cloud', year: '2016', description: 'Web application deployment on Amazon EC2.', tags: ['AWS', 'EC2', 'Distributed systems'], art: 'cloud' },
   { id: 'comments', title: 'A place for conversation', category: 'Web development', type: 'Web', year: '2016', description: 'A React comment app with JSON persistence.', tags: ['React', 'Node.js', 'Express', 'CSS'], art: 'comments', repositoryUrl: 'https://github.com/gargimk/ReactJS/tree/master/CommentApp' },
   { id: 'houses', title: 'Making sense of house prices', category: 'Machine learning', type: 'ML', year: '2016', description: 'Advanced regression techniques for a Kaggle competition.', tags: ['Regression', 'Data analysis', 'Kaggle'], art: 'houses', repositoryUrl: 'https://github.com/gargimk/Housing-Prices-prediction' },
   { id: 'prof', title: 'RateThyProf', category: 'Web development', type: 'Web', year: '2016', description: 'A single-page professor and university rating app.', tags: ['AngularJS', 'Hapi.js', 'MongoDB'], art: 'prof', repositoryUrl: 'https://github.com/gargimk/cpsc-473/tree/master/gradProj' },
+  { id: 'cloud', title: 'From code to cloud', category: 'Cloud computing', type: 'Cloud', year: '2016', description: 'Web application deployment on Amazon EC2.', tags: ['AWS', 'EC2', 'Distributed systems'], art: 'cloud' },
 ];
 const sideProjects = [
   { id: 'portfolio', title: 'My personal portfolio', category: 'Web development', type: 'Web', year: '2026', description: 'A personal space for my engineering journey, creative interests, and drawings.', tags: ['React', 'JavaScript', 'CSS', 'Vite'], art: 'portfolio' },
@@ -87,16 +87,29 @@ function ProjectArt({ kind }) {
   </div>;
 }
 
+function UniversityProjectArt({ kind }) {
+  const visuals = {
+    poker: { label: 'Team estimation', shape: <><rect x="14" y="19" width="32" height="46" rx="5" transform="rotate(-12 30 42)" /><rect x="44" y="12" width="32" height="46" rx="5" /><rect x="74" y="19" width="32" height="46" rx="5" transform="rotate(12 90 42)" /><text x="60" y="41" textAnchor="middle" stroke="none" fill="currentColor" fontSize="20">3</text><path d="M26 35h8m-4-4v18M85 36h10l-8 13" /></> },
+    sentiment: { label: 'Review sentiment', shape: <><path d="M12 14h44v30H32L20 54V44h-8V14ZM64 28h44v30H94l-12 10V58H64V28Z" /><path d="M25 32q9 10 18 0m34 17q9-10 18 0" /><circle cx="27" cy="25" r="1" /><circle cx="42" cy="25" r="1" /><circle cx="78" cy="40" r="1" /><circle cx="94" cy="40" r="1" /></> },
+    cloud: { label: 'Cloud deployment', shape: <><path d="M30 44H22a12 12 0 0 1-1-24 21 21 0 0 1 40-2 14 14 0 0 1 9 26H58" /><rect x="78" y="33" width="28" height="18" rx="3" /><rect x="78" y="55" width="28" height="18" rx="3" /><path d="M40 66V34m-8 8 8-8 8 8M40 66h26m-7-7 7 7-7 7M85 42h2m-2 22h2" /></> },
+    comments: { label: 'React comments', shape: <><path d="M12 12h64v35H38L23 59V47H12V12Z" /><path d="M48 51v12h34l15 9V63h10V31H83M25 24h38M25 34h25M62 55h31" /></> },
+    houses: { label: 'Price prediction', shape: <><path d="m11 37 24-20 24 20M18 33v34h34V33M29 67V49h12v18M72 20v47h37M78 55l10-16 9 6 12-22m-11 0h11v11" /></> },
+    prof: { label: 'Professor ratings', shape: <><path d="m10 26 31-14 31 14-31 14L10 26ZM21 32v17q20 12 40 0V32M72 26v24" /><path d="m91 36 5 10 11 2-8 8 2 12-10-6-10 6 2-12-8-8 11-2 5-10Z" /></> },
+  };
+  const visual = visuals[kind];
+  return <div className="university-project-art" aria-hidden="true"><svg viewBox="0 0 120 80" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{visual.shape}</svg><span>{visual.label}</span></div>;
+}
+
 function ProjectCard({ project, headingLevel = 3 }) {
   const Heading = `h${headingLevel}`;
   return <article className={`project-card project-${project.art}`}>
-    <ProjectArt kind={project.art} />
+    {project.group === 'university' ? <UniversityProjectArt kind={project.art} /> : <ProjectArt kind={project.art} />}
     <div className="project-content">
       <div className="project-meta"><span>{project.category}</span><span>{project.year}</span></div>
       <div className="project-title"><Heading>{project.title}</Heading></div>
       <p>{project.description}</p>
       <ul className="project-stack" aria-label="Project technologies">{project.tags.map(tag => <li key={tag}>{tag}</li>)}</ul>
-      {project.repositoryUrl && <a className="project-open" href={project.repositoryUrl} target="_blank" rel="noopener noreferrer" aria-label={`View project: ${project.title} on GitHub (opens in a new tab)`}><span className="project-action-label">View project <Arrow diagonal /></span></a>}
+      {project.repositoryUrl && <a className="project-open" href={project.repositoryUrl} target="_blank" rel="noopener noreferrer" aria-label={`View project code on GitHub: ${project.title} (opens in a new tab)`}><span className="project-action-label">View project code on GitHub <Arrow diagonal /></span></a>}
     </div>
   </article>;
 }
@@ -308,7 +321,7 @@ function Projects() {
         const entries = filtered.filter(project => project.group === group.id);
         return <section className="project-group" key={group.id} aria-labelledby={`${group.id}-projects-heading`}>
           <div className="section-heading"><div><span className="section-kicker">{group.label}</span><h2 id={`${group.id}-projects-heading`}>{group.title}</h2><p className="project-group-description">{group.description}</p></div></div>
-          {entries.length ? <div className="project-grid projects-full">{entries.map(project => <ProjectCard key={project.id} project={project} />)}</div> : <p className="project-group-empty">No projects in this section match the selected filter.</p>}
+          {entries.length ? <div className={`project-grid projects-full${group.id === 'university' ? ' project-grid-compact' : ''}`}>{entries.map(project => <ProjectCard key={project.id} project={project} />)}</div> : <p className="project-group-empty">No projects in this section match the selected filter.</p>}
         </section>;
       })}
     </div>
@@ -342,11 +355,18 @@ function tabFromHash() { return tabs.find(tab=>tab.toLowerCase()===window.locati
 
 export function App() {
   const [activeTab, setActiveTab] = useState(tabFromHash);
+  const [showBackToTop, setShowBackToTop] = useState(() => window.scrollY > 400);
   const tabRefs = useRef([]);
   const panelRefs = useRef({});
   const mainRef = useRef(null);
   const focusPanel = useRef(false);
   const focusSection = useRef(null);
+  useEffect(() => {
+    const update = () => setShowBackToTop(window.scrollY > 400);
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+    return () => window.removeEventListener('scroll', update);
+  }, []);
   useEffect(() => {
     const sync = () => {
       focusPanel.current = true;
@@ -389,6 +409,11 @@ export function App() {
     if (event.key==='End') next=tabs.length-1;
     if (next!==undefined) {event.preventDefault();navigate(tabs[next]);tabRefs.current[next].focus();}
   }
+  function backToTop() {
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    tabRefs.current[tabs.indexOf(activeTab)]?.focus({ preventScroll: true });
+    window.scrollTo({ top: 0, behavior: reducedMotion ? 'instant' : 'smooth' });
+  }
   return <div className="site-shell">
     <a className="skip-link" href="#main-content" onClick={event => { event.preventDefault(); mainRef.current?.focus(); }}>Skip to main content</a>
     <header className="site-header"><a className="brand" href="#about" aria-label="Gargi Kulkarni home" onClick={event => { event.preventDefault(); navigate('About', { moveFocus: true }); }}><span className="brand-mark" aria-hidden="true">gk</span><span>Gargi Kulkarni</span></a><div className="tabs" role="tablist" aria-label="Portfolio sections">{tabs.map((tab,index)=><button key={tab} ref={el=>tabRefs.current[index]=el} role="tab" id={`tab-${tab.toLowerCase()}`} aria-controls={`panel-${tab.toLowerCase()}`} aria-selected={tab===activeTab} tabIndex={tab===activeTab?0:-1} className={tab===activeTab?'active':''} onClick={()=>navigate(tab)} onKeyDown={event=>handleTabKey(event,index)}>{tab}</button>)}</div><nav className="header-socials" aria-label="Social profiles"><LinkedInLink className="header-social"><span className="linkedin-icon" aria-hidden="true">in</span><span className="sr-only">LinkedIn profile</span></LinkedInLink><GitHubLink className="header-social"><GitHubIcon /><span className="sr-only">GitHub profile</span></GitHubLink><InstagramLink className="header-social" showArrow={false}><InstagramIcon /><span className="sr-only">Instagram profile</span></InstagramLink></nav></header>
@@ -400,6 +425,7 @@ export function App() {
       ))}
     </main>
     <footer className="site-footer"><span>© {new Date().getFullYear()} Gargi Kulkarni</span><span className="footer-note">A little curiosity goes a long way.</span><div className="footer-socials"><LinkedInLink className="footer-link" showArrow={false}>LinkedIn</LinkedInLink><GitHubLink className="footer-link" showArrow={false}>GitHub</GitHubLink><InstagramLink className="footer-link" showArrow={false} /></div></footer>
+    {showBackToTop && <button className="back-to-top" type="button" aria-label="Back to top" title="Back to top" onClick={backToTop}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 20V4m-6 6 6-6 6 6" /></svg><span className="back-to-top-label">Back to top</span></button>}
   </div>;
 }
 

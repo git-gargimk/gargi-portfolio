@@ -1,11 +1,47 @@
 import React from 'react';
-import { describe, expect, it } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import axe from 'axe-core';
 import { App } from '../main';
 
 describe('keyboard and assistive technology workflows', () => {
+  it.each(['About', 'Experience', 'Projects', 'Contact'])('returns to the top of %s and restores focus to its selected tab', async (tab) => {
+    const user = userEvent.setup();
+    window.history.replaceState(null, '', `#${tab.toLowerCase()}`);
+    render(<App />);
+    expect(screen.queryByRole('button', { name: 'Back to top' })).toBeNull();
+    window.scrollY = 600;
+    fireEvent.scroll(window);
+    await user.click(screen.getByRole('button', { name: 'Back to top' }));
+    expect(window.scrollTo).toHaveBeenLastCalledWith({ top: 0, behavior: 'smooth' });
+    const selected = screen.getByRole('tab', { name: tab });
+    expect(document.activeElement).toBe(selected);
+    expect(selected.getAttribute('aria-selected')).toBe('true');
+    expect(window.location.hash).toBe(`#${tab.toLowerCase()}`);
+    window.scrollY = 0;
+    fireEvent.scroll(window);
+    expect(screen.queryByRole('button', { name: 'Back to top' })).toBeNull();
+  });
+
+  it('returns to the top without animation when reduced motion is preferred', async () => {
+    vi.stubGlobal('matchMedia', () => ({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
+    try {
+      const user = userEvent.setup();
+      window.history.replaceState(null, '', '#experience');
+      render(<App />);
+      window.scrollY = 600;
+      fireEvent.scroll(window);
+      const button = screen.getByRole('button', { name: 'Back to top' });
+      button.focus();
+      await user.keyboard('{Enter}');
+      expect(window.scrollTo).toHaveBeenLastCalledWith({ top: 0, behavior: 'instant' });
+      expect(document.activeElement).toBe(screen.getByRole('tab', { name: 'Experience' }));
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
   it('offers a first-tab skip link that focuses the main landmark without changing sections', async () => {
     const user = userEvent.setup();
     render(<App />);
@@ -90,7 +126,7 @@ describe('keyboard and assistive technology workflows', () => {
     expect(screen.getByRole('status').textContent).toBe('2 projects');
     expect(screen.getAllByRole('article')).toHaveLength(2);
     expect(screen.getByRole('heading', { name: 'Reading between the reviews' })).toBeTruthy();
-    const link = screen.getByRole('link', { name: 'View project: Reading between the reviews on GitHub (opens in a new tab)' });
+    const link = screen.getByRole('link', { name: 'View project code on GitHub: Reading between the reviews (opens in a new tab)' });
     expect(link.getAttribute('href')).toBe('https://github.com/gargimk/CPSC531Project');
     expect(link.getAttribute('target')).toBe('_blank');
     expect(link.getAttribute('rel')).toBe('noopener noreferrer');
@@ -121,14 +157,14 @@ describe('keyboard and assistive technology workflows', () => {
       ['RateThyProf', 'https://github.com/gargimk/cpsc-473/tree/master/gradProj'],
     ];
     for (const [title, url] of expected) {
-      expect(screen.getByRole('link', { name: `View project: ${title} on GitHub (opens in a new tab)` }).getAttribute('href')).toBe(url);
+      expect(screen.getByRole('link', { name: `View project code on GitHub: ${title} (opens in a new tab)` }).getAttribute('href')).toBe(url);
     }
-    expect(screen.getAllByRole('link', { name: /^View project:/ })).toHaveLength(5);
+    expect(screen.getAllByRole('link', { name: /^View project code on GitHub:/ })).toHaveLength(5);
     for (const title of ['From code to cloud', 'My personal portfolio']) {
       const article = screen.getByRole('heading', { name: title }).closest('article');
       expect(within(article).queryByRole('link')).toBeNull();
       expect(within(article).queryByRole('button')).toBeNull();
     }
-    expect(screen.queryByRole('button', { name: /^View project:/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /^View project code on GitHub:/ })).toBeNull();
   });
 });
