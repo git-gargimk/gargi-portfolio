@@ -13,11 +13,11 @@
   --muted: #515765;
   --line: #dfe3ea;
   --control-border: #7a8292;
-  --accent: #2a427a;
-  --accent-hover: #1c305e;
-  --accent-soft: #eef1fa;
-  --contact-hover: #eef1fa;
-  --panel: #f6f7fb;
+  --accent: #3157d5;
+  --accent-hover: #2444ad;
+  --accent-soft: #edf2ff;
+  --contact-hover: #e5ecff;
+  --panel: #f6f8ff;
   --cyan: #176b76;
   --coral: #a94029;
   --focus: #9a3412;
@@ -40,7 +40,7 @@ h1, h2, h3, p { margin: 0; }
 h1, h2, h3 { font-family: var(--serif); }
 h1, h2 { font-weight: 600; letter-spacing: -.035em; }
 h1 em { color: var(--accent); font-style: normal; }
-::selection { background: #dde6fb; color: var(--ink); }
+::selection { background: #dce5ff; color: var(--ink); }
 
 .about-biography > p:not(.about-role),
 .about-summary > p:not(.about-summary-detail),
@@ -105,7 +105,7 @@ h1 em { color: var(--accent); font-style: normal; }
   padding: 36px 0;
 }
 .about-profile { margin: 4px 0 0; min-width: 0; }
-.about-portrait { display: grid; place-items: center; aspect-ratio: 4 / 5; overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: linear-gradient(150deg, var(--accent-soft), #edf6f8); }
+.about-portrait { display: grid; place-items: center; aspect-ratio: 4 / 5; overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: linear-gradient(150deg, var(--accent-soft), var(--panel)); }
 .about-portrait img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
 .about-initials { color: var(--accent); font-family: Georgia, serif; font-size: clamp(6rem, 12vw, 9rem); letter-spacing: -.08em; line-height: 1; }
 .about-profile figcaption { display: flex; flex-direction: column; gap: 2px; margin-top: 14px; }
@@ -216,7 +216,7 @@ h1 em { color: var(--accent); font-style: normal; }
 .preview-estimates span { flex: 1; display: flex; justify-content: center; align-items: center; height: 48px; border: 1px solid #c2c8dc; border-radius: 3px; font-size: 17px; color: var(--preview-accent); }
 .preview-estimates .chosen { background: var(--preview-accent); color: #fff; border-color: var(--preview-accent); }
 .preview-people { display: flex; align-items: center; font-size: 9px; color: var(--muted); }
-.preview-people i { display: flex; align-items: center; justify-content: center; width: 19px; height: 19px; border-radius: 50%; background: #eef1fa; font-size: 8px; font-style: normal; margin-right: 4px; }
+.preview-people i { display: flex; align-items: center; justify-content: center; width: 19px; height: 19px; border-radius: 50%; background: var(--accent-soft); font-size: 8px; font-style: normal; margin-right: 4px; }
 .preview-people > span { margin-left: 5px; }
 .preview-reviews > div { display: flex; align-items: center; justify-content: space-between; gap: 8px; border-bottom: 1px solid var(--line); padding: 10px 0; font-size: 10px; color: var(--muted); }
 .preview-reviews b { color: var(--preview-accent); font-size: 9px; font-weight: 500; }

@@ -15,8 +15,8 @@ The implementation follows [W3C's accessibility mission](https://www.w3.org/miss
 
 ## Presentation
 
-- Project previews share the portfolio’s navy, white, and soft neutral palette. Tested normal-text pairs meet 4.5:1; tested focus and control borders meet 3:1.
-- Active tabs have an underline and font-weight change. Selected project filters use a stronger font weight, navy border, and soft background, so state is not conveyed only through color. Text links are underlined.
+- Project previews share the portfolio’s royal blue, white, and light blue palette. Tested normal-text pairs meet 4.5:1; tested focus and control borders meet 3:1.
+- Active tabs have an underline and font-weight change. Selected project filters use a stronger font weight, royal blue border, and soft background, so state is not conveyed only through color. Text links are underlined.
 - Controls have at least a 44px height; icon-only controls have a 44px minimum width. Only the “View project code on GitHub” action is clickable; project descriptions and previews are static.
 - The responsive layout includes a two-column tab grid below 400px and wrapping content. Font sizes use relative units.
 - Focus indicators are visible, and reduced-motion and forced-colors preferences have dedicated styles.
