@@ -39,7 +39,7 @@ svg { flex-shrink: 0; }
 h1, h2, h3, p { margin: 0; }
 h1, h2, h3 { font-family: var(--serif); color: var(--accent); }
 h1, h2 { font-weight: 600; letter-spacing: -.035em; }
-h1 em { color: var(--accent); font-style: normal; }
+h1 em { color: var(--ink); font-style: normal; }
 ::selection { background: var(--accent-soft); color: var(--ink); }
 
 .about-biography > p:not(.about-role),

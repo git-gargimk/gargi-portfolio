@@ -23,6 +23,7 @@ describe('WCAG color contrast for the site palette', () => {
     ['accent', 'contact-hover'], ['muted', 'contact-hover'],
     ['muted', 'accent-soft'], ['#ffffff', 'accent'], ['#ffffff', 'accent-hover'],
     ['sunshine-ink', 'sunshine-soft'],
+    ['ink', 'panel'],
   ];
   it.each(textPairs)('%s on %s meets 4.5:1 for normal text', (foreground, background) => {
     const ratio = contrast(colors[foreground] || foreground, colors[background] || background);
