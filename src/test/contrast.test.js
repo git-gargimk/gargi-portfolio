@@ -18,16 +18,17 @@ function contrast(foreground, background) {
 describe('WCAG color contrast for the site palette', () => {
   const textPairs = [
     ['ink', 'paper'], ['muted', 'paper'], ['accent', 'paper'],
+    ['ink', 'surface'], ['muted', 'surface'], ['accent', 'surface'],
     ['muted', 'panel'], ['accent', 'panel'], ['accent', 'accent-soft'],
     ['accent', 'contact-hover'], ['muted', 'contact-hover'],
-    ['muted', 'accent-soft'], ['cyan', 'paper'], ['coral', 'paper'],
-    ['#ffffff', 'accent'], ['#ffffff', 'accent-hover'],
+    ['muted', 'accent-soft'], ['#ffffff', 'accent'], ['#ffffff', 'accent-hover'],
+    ['sunshine-ink', 'sunshine-soft'],
   ];
   it.each(textPairs)('%s on %s meets 4.5:1 for normal text', (foreground, background) => {
     const ratio = contrast(colors[foreground] || foreground, colors[background] || background);
     expect(ratio).toBeGreaterThanOrEqual(4.5);
   });
-  it.each(['paper', 'accent-soft', 'panel'])('control outlines on %s meet 3:1', background => {
+  it.each(['paper', 'surface', 'accent-soft', 'panel', 'contact-hover', 'sunshine-soft'])('control outlines on %s meet 3:1', background => {
     expect(contrast(colors['control-border'], colors[background])).toBeGreaterThanOrEqual(3);
     expect(contrast(colors.focus, colors[background])).toBeGreaterThanOrEqual(3);
   });

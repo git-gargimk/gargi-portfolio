@@ -262,7 +262,7 @@ function Experience() {
         <dl className="education-grades">
           <div><dt>Grade</dt><dd>A</dd></div>
         </dl>
-        <span className="subtle-label">ACTIVITIES &amp; SOCIETIES</span>
+        <span className="section-kicker">ACTIVITIES &amp; SOCIETIES</span>
         <ul className="education-activities">
           <li>VIP-Volunteer International Peer at International Programs &amp; Global Engagement</li>
         </ul>
@@ -276,7 +276,7 @@ function Experience() {
         <dl className="education-grades">
           <div><dt>Grade</dt><dd>70%</dd></div>
         </dl>
-        <span className="subtle-label">ACTIVITIES &amp; SOCIETIES</span>
+        <span className="section-kicker">ACTIVITIES &amp; SOCIETIES</span>
         <ul className="education-activities">
           <li>Member of the Campus Social Responsibility group</li>
           <li>Member of the college magazine “MOSIAC”</li>

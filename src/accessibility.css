@@ -35,12 +35,6 @@ main:focus-visible {
   scroll-margin-top: 16px;
 }
 
-h2.section-kicker {
-  font-family: inherit;
-  font-weight: 600;
-  letter-spacing: 1.5px;
-}
-
 .brand,
 .header-social,
 .text-link,
