@@ -39,6 +39,9 @@ function SectionIcon({ type }) {
     certifications: <><circle cx="12" cy="8" r="5" /><path d="m8 12-1 9 5-3 5 3-1-9" /></>,
     projects: <><path d="M3 7V5a2 2 0 0 1 2-2h4l2 3h8a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" /><path d="m10 11-2 3 2 3m4-6 2 3-2 3" /></>,
     drawing: <><path d="m16 3 5 5-12 12-6 1 1-6L16 3ZM13 6l5 5M4 15l5 5" /></>,
+    dancing: <><path d="M9 18V5l12-2v13M9 8l12-2" /><ellipse cx="6" cy="18" rx="3" ry="2" /><ellipse cx="18" cy="16" rx="3" ry="2" /></>,
+    hiking: <><path d="m2 20 7-13 5 9 3-5 5 9H2ZM6 13l3 2 3-2M13 6l2-3 3 5" /></>,
+    exploring: <><circle cx="12" cy="12" r="9" /><path d="m16 8-2 6-6 2 2-6 6-2Z" /></>,
     contact: <><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z" /><path d="M7 8h10M7 12h6" /></>,
   };
   return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{shapes[type]}</svg>;
@@ -169,12 +172,14 @@ function About({ navigate }) {
         <p className="profile-descriptors">Curious <span aria-hidden="true">|</span> Creative <span aria-hidden="true">|</span> Collaborative</p>
       </figure>
       <div className="about-biography">
-        <span className="eyebrow">A LITTLE ABOUT ME</span>
-        <h1 id="about-heading">Hi, I’m Gargi.</h1>
-        <p className="about-role">Software Engineer 2 at Microsoft</p>
-        <p>I’m a software engineer based in the Greater Seattle Area. At Microsoft, I build customer-facing applications and AI-powered engineering tools, with a focus on making complex workflows clearer and easier to use.</p>
-        <p>I hold an M.S. in Computer Science from California State University, Fullerton and a B.E. in Electronics and Communication from Sinhgad Academy of Engineering, affiliated with Savitribai Phule Pune University.</p>
-        <p>I’m curious about how things work and enjoy finding ways to make them clearer. Alongside engineering, drawing and dance give me space for creative expression. This portfolio brings those different parts of my life together.</p>
+        <div className="about-biography-heading">
+          <span className="eyebrow">A LITTLE ABOUT ME</span>
+          <h1 id="about-heading">Hi, I’m Gargi.</h1>
+          <p className="about-role">Software Engineer 2 at Microsoft</p>
+        </div>
+        <p>Based in Greater Seattle, I build customer-facing applications and AI-powered tools at Microsoft. From eCommerce at Accenture to cloud applications at Phyn and enterprise platforms at Microsoft, I’ve worked across frontend and backend systems to make complex experiences simpler, faster, and more reliable.</p>
+        <p>I hold an M.S. in Computer Science from California State University, Fullerton and a B.E. in Electronics and Communication from Sinhgad Academy of Engineering. I enjoy solving problems with teammates, mentoring engineers, and learning new ways to build useful software.</p>
+        <p>Outside work, I enjoy drawing intricate mandalas and pencil sketches, dancing, and hiking around the Pacific Northwest. Elfin Lakes in British Columbia, Canada is my favorite hike so far. I also love exploring new places and food—especially New York City, my favorite city, and a slice from L’Industrie Pizzeria.</p>
       </div>
     </section>
     <div className="about-overview">
@@ -206,6 +211,20 @@ function About({ navigate }) {
             <p>Drawing is a way for me to explore ideas and express my creative side. From intricate mandalas and floral patterns to pencil sketches of birds and animals, here’s a glimpse into my sketchbook.</p>
           </div>
           <DrawingCarousel items={drawings} />
+          <div className="personal-hobbies">
+            <section className="about-summary personal-interest" aria-labelledby="hobby-dancing-heading">
+              <h3 id="hobby-dancing-heading"><SectionIcon type="dancing" />Dancing</h3>
+              <p>Alongside drawing, dancing is another way I enjoy expressing my creative side.</p>
+            </section>
+            <section className="about-summary personal-interest" aria-labelledby="hobby-hiking-heading">
+              <h3 id="hobby-hiking-heading"><SectionIcon type="hiking" />Hiking</h3>
+              <p>I’ve been exploring trails around the Pacific Northwest. My favorite hike so far is Elfin Lakes in British Columbia, Canada.</p>
+            </section>
+            <section className="about-summary personal-interest" aria-labelledby="hobby-exploring-heading">
+              <h3 id="hobby-exploring-heading"><SectionIcon type="exploring" />Places &amp; food</h3>
+              <p>I love exploring new places and trying new food. New York City is my favorite city, and L’Industrie Pizzeria is my favorite food spot there.</p>
+            </section>
+          </div>
         </div>
       </section>
       <section className="about-tab-summary" aria-labelledby="about-contact-heading">
